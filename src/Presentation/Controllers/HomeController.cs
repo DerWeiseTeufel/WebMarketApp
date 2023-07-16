@@ -8,13 +8,9 @@ namespace Marketplace.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ITaskItemRep taskRep;
-        private readonly IMapper mapper;
 
-        public HomeController(ITaskItemRep taskRep, IMapper mapper)
+        public HomeController()
         {
-            this.taskRep = taskRep;
-            this.mapper = mapper;
         }
 
         public IActionResult Index()

@@ -17,8 +17,8 @@ builder.Services.AddAuthentication().AddGoogle(googleOptions =>
 });
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
-    throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("SomeeConnection") ??
+    throw new InvalidOperationException("Connection string 'SomeeConnection' not found.");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -26,7 +26,6 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
-
 
 builder.Services.AddScoped<IUserRep, UserRep>();
 builder.Services.AddScoped<ITaskItemRep, TaskRep>();

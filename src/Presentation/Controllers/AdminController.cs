@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.ViewModels;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Presentation.Controllers
 {
@@ -65,19 +66,26 @@ namespace Presentation.Controllers
         {
             if (ModelState.IsValid && roleVM.UserEmail != null && roleVM.RoleName != null)
             {
-                var userTarget = await userRep.GetByEmailAsync(roleVM.UserEmail);
-                IdentityResult result = await userManager.AddToRoleAsync(userTarget, roleVM.RoleName);
-
-                if (result.Succeeded)
+                if (await roleManager.FindByNameAsync(roleVM.RoleName) is null)
                 {
-                    ViewData["Result"] = "Success";
-                    return View("Index");
+                    ModelState.AddModelError("", "The role doesn`t exist");
                 }
-
-                foreach (IdentityError error in result.Errors)
+                else
                 {
-                    ModelState.AddModelError("", error.Description);
-                }
+                    var userTarget = await userRep.GetByEmailAsync(roleVM.UserEmail);
+                    IdentityResult result = await userManager.AddToRoleAsync(userTarget, roleVM.RoleName);
+
+                    if (result.Succeeded)
+                    {
+                        ViewData["Result"] = "Success";
+                        return View("Index");
+                    }
+
+                    foreach (IdentityError error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                }                             
             }
 
             return View("Index", roleVM);

@@ -13,6 +13,7 @@ namespace Infrastructure.Repositories
         {
             this.dbContext = dbContext;
         }
+
         public async Task<Solution?> GetByIdAsync(int id) => 
             await dbContext.Solutions.FirstOrDefaultAsync(a => a.Id == id);        
     }

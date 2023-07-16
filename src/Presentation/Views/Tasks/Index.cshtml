@@ -18,10 +18,10 @@
     <div class="row">
         @foreach (var taskItem in Model)
         {
-            <div class="card" style="margin-top: 15px;">
+            <div class="card mt-3">
                 <div class="card-header">
-                    <div class="card-title"> @taskItem.Title </div>
-                    <div class="align-middle">
+                    <div style="width:min-content" class="card-title flex-fill"> @taskItem.Title </div>
+                    <div style="width:max-content; margin: 0 20px; align-content:end">
                         <a class="btn btn-outline-info" asp-controller="Tasks" asp-action="TaskDetails" asp-route-taskId="@taskItem.Id"><i class="bi bi-eye"></i> Details </a>
                         @if (User.IsInRole(UserRoles.Admin))
                         {
