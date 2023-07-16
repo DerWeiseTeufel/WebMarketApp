@@ -1,0 +1,82 @@
+﻿@using Presentation.ViewModels;
+@model TaskVM
+
+@{
+    ViewData["Title"] = "Task Details";
+}
+
+<h2 class="card-text mt-4 mb-5">Task Details</h2>
+
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title mb-0">Task Title:</h5>
+        <hr>
+        <p class="card-text mb-4"> @Model.TaskItemName </p>
+        <hr class="border-top">
+        <h5 class="card-text mt-5"> Short Description: </h5>
+        <hr>
+        <p class="card-text mb-4"> @Model.ShortDescr </p>
+        <hr class="border-top">
+        <h5 class="card-text mt-5"> Full Description </h5>
+        <hr>
+        <p class="card-text mb-4"> @Model.Description </p>
+        <hr class="border-top">
+        <h6 class="card-text mt-5" style="white-space: pre-wrap;"> Reward:  @Model.Reward @ViewData["Currency"]</h6>
+        <hr>
+        <h6 class="card-text"> Deadline: @Model.Deadline </h6>
+    </div>
+</div>
+
+<div class="btn-group d-flex mt-4">
+    <button class="btn btn-secondary btn-lg dropdown-toggle col-md-6" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        View solutions
+    </button>
+    <ul class="dropdown-menu col-xs-12 w-100" role="menu" aria-labelledby="dLabel">
+        @foreach(var solution in Model.Solutions)
+        {
+            <li class="list-group-item">
+                <div class="card" style="width: 100%; max-height: 215px; padding:10px">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="@solution.Executor.ProfilePicture" class="img-fluid rounded-start" alt="No Image">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 style="display:inline; white-space: pre-wrap" class="card-title"> Executor: @solution.Executor.UserName  Rating: @solution.Executor.Reputation </h5>
+                                <p class="card-text"> @solution.URL </p>
+                                <p class="card-text"><small class="text-body-secondary"> Uploaded: @solution.UploadDate </small></p>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#FeedbackModal">
+                                    Rate the solution
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+</div>
+
+<!--modal--->
+<div class="modal fade" id="FeedbackModal" tabindex="-1" aria-labelledby="FeedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="FeedbackModalLabel"> Feedback </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <textarea class="form-control form-control-lg" id="comment" rows="5" name="comment" placeholder="Leave a comment"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal"> Decline </button>
+                <button type="button" class="btn btn-success"> Accept </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,63 @@
+﻿@using Domain.Constants;
+@using Microsoft.AspNetCore.Identity;
+@using Presentation.ViewModels;
+@inject SignInManager<Domain.Entities.User> SignInManager
+@inject UserManager<Domain.Entities.User> UserManager
+@model SolutionVM
+
+<li class="list-group-item">
+    <div class="card" style="max-height: 200px; padding: 10px;">
+        <div class="row g-4">
+            <div class="col-md-4" style="width: 200px">
+                <div class="text-center">
+                    <img class="rounded-start img-thumbnail img-fluid" src="@Url.Content($"{Model.Executor.ProfilePicture}")" alt="No Image">
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <label class="float-start">Executor: @Model.Executor.Name</label>
+                        </div>
+                        <div class="col">
+                            <label class="float-end">Reputation: @Model.Executor.Reputation</label>
+                        </div>
+                    </div>
+                    <a href="@Model.URL">Ссылка на решение</a>
+                    <p class="card-text mt-4"><small class="text-body-secondary">Uploaded: @Model.UploadDate</small></p>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#FeedbackModal-@Model.Id">
+                        Rate the solution
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</li>
+
+
+<!--modal--->
+<div class="modal fade" id="FeedbackModal-@Model.Id" tabindex="-1" aria-labelledby="FeedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="post">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="FeedbackModalLabel"> Feedback </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <textarea asp-for="@Model.Comment" class="form-control form-control-lg" id="comment" rows="5" name="comment" placeholder="Leave a comment"></textarea>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" asp-controller="Solutions" asp-action="DeclineSol" class="btn btn-danger" data-bs-dismiss="modal"> Decline </button>
+                    <button type="submit" asp-controller="Solutions" asp-action="AcceptSol" class="btn btn-success"> Accept </button>
+                </div>
+
+                <partial name="_DataSaverPartial" />
+            </form>
+        </div>
+    </div>
+</div>

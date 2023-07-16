@@ -1,0 +1,7 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, AuthoringTagHelpers
+
+@foreach (var prop in ViewData.ModelMetadata.Properties)
+{
+    @Html.Hidden(prop.PropertyName)
+}

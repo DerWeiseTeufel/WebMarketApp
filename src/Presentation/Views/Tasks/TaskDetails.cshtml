@@ -1,0 +1,70 @@
+﻿@using Domain.Constants;
+@using Microsoft.AspNetCore.Identity;
+@using Presentation.ViewModels;
+@inject SignInManager<Domain.Entities.User> SignInManager
+@inject UserManager<Domain.Entities.User> UserManager
+@model TaskVM
+
+@{
+    ViewData["Title"] = "Task Details";
+}
+
+<h2 class="card-text mt-4 mb-5"> @ViewData["Title"] </h2>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title mb-0">Task Title:</h5>
+        <hr>
+        <p class="card-text mb-4"> @Model.Title </p>
+        <hr class="border-top">
+        <h5 class="card-text mt-5"> Short Description: </h5>
+        <hr>
+        <p class="card-text mb-4"> @Model.ShortDescr </p>
+        <hr class="border-top">
+        <h5 class="card-text mt-5"> Full Description </h5>
+        <hr>
+        <p class="card-text mb-4"> @Model.Description </p>
+        <hr class="border-top">
+        <h6 class="card-text mt-5" style="white-space: pre-wrap;"> Reward:  @Model.Reward @ViewData["Currency"]</h6>
+        <hr>
+        <h6 class="card-text"> Deadline: @Model.Deadline </h6>
+    </div>
+</div>
+
+<div class="btn-group d-flex flex-row mt-4">
+    <button class="btn btn-secondary btn-lg col-md-6" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+        Solutions
+    </button>
+</div>
+<div class="collapse col-xs-12 w-100 mt-2" id="collapseExample">
+    <ul class="list-group">
+        @foreach (var solution in Model.Solutions)
+        {
+            @await Html.PartialAsync("/Views/Solutions/_SolutionItem.cshtml", solution)
+        }
+    </ul>
+</div>
+
+
+@if (SignInManager.IsSignedIn(User) && User.IsInRole(UserRoles.User) && Model.IsExpired == false)
+{
+    <div style="position: fixed; right: 25px; bottom: 25px;" class="text-white">
+        <p>
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBtn" aria-expanded="false" aria-controls="collapseBtn">
+                Add solution
+            </button>
+        </p>
+        <div class="collapse" id="collapseBtn">
+            <div class="card card-body" style="width: 600px">
+                <form method="post" asp-controller="Solutions" asp-action="SaveSolution">
+                    <input name="URL" class="form-control form-control-lg" placeholder="URL" required />
+                    <input name="taskId" value="@Model.Id" hidden />
+                    <div class="mt-2 d-md-flex justify-content-md-end">
+                        <div id="liveAlertPlaceholder"></div>
+                        <button id="liveAlertBtn" class="btn btn-primary" style="width: 200px" type="submit"> Send </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}

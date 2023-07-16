@@ -1,0 +1,36 @@
+﻿@using Presentation.ViewModels;
+@{
+    ViewData["Title"] = "Add Task";
+}
+
+@model TaskVM
+
+<h2 style="text-align: center; margin-top: 60px; margin-bottom: 40px;"> Create a task </h2>
+
+<form method="post" asp-controller="Task" asp-action="SaveTask">  
+    <div class="form-group">
+        <label asp-for="TaskItemName" class="form-label"> Title: </label>
+        <input asp-for="TaskItemName" class="form-control form-control-lg" placeholder="Enter title" required>
+    </div>
+    <div class="form-group">
+        <label asp-for="ShortDescr" class="form-label"> Short Description: </label>
+        <input asp-for="ShortDescr" type="text" class="form-control form-control-lg" placeholder="Enter short description" required>
+    </div>
+    <div class="form-group">
+        <label asp-for="Description" class="form-label"> Full Description: </label>
+        <textarea asp-for="Description" class="form-control form-control-lg" rows="5" placeholder="Enter full description" required></textarea>
+    </div>
+    <div class="form-inline">
+        <div class="form-group">
+            <label asp-for="Reward" class="form-label"> Reward: </label>
+            <input asp-for="Reward" type="number" class="form-control form-control-lg" placeholder="Enter amount" required>
+        </div>
+        <div class="form-group">
+            <label asp-for="Deadline" class="form-label"> Deadline: </label>
+            <input asp-for="Deadline" type="date" class="form-control form-control-lg" required>
+        </div>
+    </div>
+    <div style="margin-top: 40px" class="d-grid gap-1 col-6 mx-auto">
+        <button class="btn btn-primary btn-lg" type="submit"> Submit </button>
+    </div>
+</form>

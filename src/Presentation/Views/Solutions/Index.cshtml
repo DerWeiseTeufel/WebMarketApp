@@ -1,0 +1,50 @@
+﻿@using Domain.Enums;
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.EntityFrameworkCore.Query;
+@using Presentation.ViewModels;
+
+@inject SignInManager<Domain.Entities.User> SignInManager
+@inject UserManager<Domain.Entities.User> UserManager
+
+@model IEnumerable<SolutionVM>
+
+@{
+    ViewData["Title"] = "My Solutions";
+}
+
+<h2 style="margin-bottom: 60px; margin-top: 40px"> @ViewData["Title"] </h2>
+
+@foreach (var solItem in Model)
+{
+    <div class="card bg-light mb-4">
+        <div class="card-body">
+            <h5 class="card-title">@solItem.TaskItem.Title</h5>
+            <p class="card-text">@solItem.TaskItem.Deadline | @solItem.TaskItem.Reward @ViewData["Currency"]</p>
+            <p class="card-text">Status: @solItem.Status</p>
+
+            <div class="d-flex justify-content-between">
+                <div>
+                    <button class="bi bi-eye btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@solItem.Id" aria-expanded="false" aria-controls="collapse-@solItem.Id">
+                        Open the comment
+                    </button>
+                    <a class="btn bi bi-eye" asp-controller="Tasks" asp-action="TaskDetails" asp-route-taskId="@solItem.Id">
+                        Open the task
+                    </a>
+                </div>
+                <form asp-controller="Solutions" asp-action="DeleteSol">
+                    <button type="submit" class="btn bi bi-trash text-danger"> Delete </button>
+                </form>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+                    <div class="collapse" id="collapse-@solItem.Id">
+                        <div class="card card-body">
+                            @solItem.Comment
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

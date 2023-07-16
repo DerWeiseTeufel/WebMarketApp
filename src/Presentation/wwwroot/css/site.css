@@ -1,0 +1,85 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.my-form-label {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.form-inline {
+    display: flex;
+    align-items: center;
+}
+
+.form-inline .form-group {
+        margin-right: 40px;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 10px 20px;
+}
+
+.card-header .title {
+    flex: 0;
+}
+
+.card-header .btn-group {
+    margin: auto;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-title {
+    margin-bottom: 15px;
+}
+
+.reward {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.date {
+    font-size: 16px;
+    color: #6c757d;
+}
+
