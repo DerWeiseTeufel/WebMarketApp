@@ -76,20 +76,21 @@ namespace WebMarket.Controllers
             return View(new SolutionVM() { Id = taskId });
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteSol(SolutionVM solVM)
+        [HttpGet]
+        public async Task<IActionResult> DeleteSol(int solId)
         {
-            if (ModelState.IsValid)
-            {
-                await solutionRep.DeleteAsync(mapper.Map<Solution>(solVM));
-            }
+            var solItem = await solutionRep.GetByIdAsync(solId);
 
-            return await Index();
+            if (solItem != null)
+            {
+                await solutionRep.DeleteAsync(solItem);
+            }        
+
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]    
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveSolution(int taskId, string URL)
         {
             var solVM = new SolutionVM()

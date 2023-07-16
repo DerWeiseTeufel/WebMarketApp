@@ -18,22 +18,20 @@
 {
     <div class="card bg-light mb-4">
         <div class="card-body">
-            <h5 class="card-title">@solItem.TaskItem.Title</h5>
-            <p class="card-text">@solItem.TaskItem.Deadline | @solItem.TaskItem.Reward @ViewData["Currency"]</p>
-            <p class="card-text">Status: @solItem.Status</p>
+            <h5 class="card-title"> Task title: @solItem.TaskItem.Title</h5>
+            <p class="card-text"> Deadline/Reward: @solItem.TaskItem.Deadline | @solItem.TaskItem.Reward @ViewData["Currency"]</p>
+            <p class="card-text"> Status: @solItem.Status</p>
 
             <div class="d-flex justify-content-between">
                 <div>
                     <button class="bi bi-eye btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@solItem.Id" aria-expanded="false" aria-controls="collapse-@solItem.Id">
                         Open the comment
                     </button>
-                    <a class="btn bi bi-eye" asp-controller="Tasks" asp-action="TaskDetails" asp-route-taskId="@solItem.Id">
+                    <a class="btn bi bi-eye" asp-controller="Tasks" asp-action="TaskDetails" asp-route-taskId="@solItem.TaskItemId">
                         Open the task
                     </a>
                 </div>
-                <form asp-controller="Solutions" asp-action="DeleteSol">
-                    <button type="submit" class="btn bi bi-trash text-danger"> Delete </button>
-                </form>
+                <a type="submit" asp-controller="Solutions" asp-action="DeleteSol" asp-route-solId="@solItem.Id" class="btn bi bi-trash text-danger"> Delete </a>
             </div>
 
             <div class="row mt-2">

@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Domain.Constants;
 
 namespace Presentation.Areas.Identity.Pages.Account
 {
@@ -28,6 +29,7 @@ namespace Presentation.Areas.Identity.Pages.Account
         private readonly IUserStore<Domain.Entities.User> _userStore;
         private readonly IUserEmailStore<Domain.Entities.User> _emailStore;
         private readonly IEmailSender _emailSender;
+        private readonly RoleManager<IdentityRole> roleManager;
         private readonly ILogger<ExternalLoginModel> _logger;
 
         public ExternalLoginModel(
@@ -35,7 +37,8 @@ namespace Presentation.Areas.Identity.Pages.Account
             UserManager<Domain.Entities.User> userManager,
             IUserStore<Domain.Entities.User> userStore,
             ILogger<ExternalLoginModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            RoleManager<IdentityRole> roleManager)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -43,6 +46,7 @@ namespace Presentation.Areas.Identity.Pages.Account
             _emailStore = GetEmailStore();
             _logger = logger;
             _emailSender = emailSender;
+            this.roleManager = roleManager;
         }
 
         /// <summary>
@@ -90,7 +94,7 @@ namespace Presentation.Areas.Identity.Pages.Account
             [Display(Name = "Name")]
             public string Name { get; set; }
         }
-        
+
         public IActionResult OnGet() => RedirectToPage("./Login");
 
         public IActionResult OnPost(string provider, string returnUrl = null)
@@ -165,9 +169,31 @@ namespace Presentation.Areas.Identity.Pages.Account
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
+                    if (user.ProfilePicture is null)
+                    {
+                        user.ProfilePicture = "~/uploads/defaultImg.jpg";
+                    }
+
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
+                        var defaultRole = await roleManager.FindByNameAsync(UserRoles.User);
+
+                        if (roleManager.Roles.Count() == 0)
+                        {
+                            IdentityRole identityRole = new IdentityRole
+                            {
+                                Name = UserRoles.Admin
+                            };
+
+                            await roleManager.CreateAsync(identityRole);
+                            await _userManager.AddToRoleAsync(user, identityRole.Name);
+                        }
+                        else if (defaultRole != null)
+                        {
+                            await _userManager.AddToRoleAsync(user, defaultRole.Name);
+                        }
+
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
 
                         var userId = await _userManager.GetUserIdAsync(user);

@@ -26,6 +26,6 @@ namespace Presentation.ViewModels
 
         public virtual User Executor { get; set; } = null!;
 
-        public virtual TaskItem TaskItem { get; set; } = null!;
+        public virtual TaskVM TaskItem { get; set; } = null!;
     }
 }
