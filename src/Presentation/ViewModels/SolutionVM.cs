@@ -9,7 +9,6 @@ namespace Presentation.ViewModels
         [Required]
         public int Id { get; set; }
 
-        [Required]
         public string Status { get; set; } = null!;
 
         [StringLength(1500)]
@@ -24,8 +23,8 @@ namespace Presentation.ViewModels
 
         public string ExecutorId { get; set; } = null!;
 
-        public virtual User Executor { get; set; } = null!;
+        public virtual User? Executor { get; set; }
 
-        public virtual TaskVM TaskItem { get; set; } = null!;
+        public virtual TaskVM? TaskItem { get; set; }
     }
 }
