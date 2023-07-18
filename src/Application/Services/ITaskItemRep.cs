@@ -2,7 +2,7 @@
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore.Query;
 
-namespace Application.DomainServices
+namespace Application.Services
 {
     public interface ITaskItemRep : IEntityBaseRep<TaskItem>
     {
