@@ -20,18 +20,30 @@
                             <label class="float-start">Executor: @Model.Executor.Name</label>
                         </div>
                         <div class="col">
-                            <label class="float-end">Reputation: @Model.Executor.Reputation</label>
+                            @{
+                                var reputation = Model.Executor.Reputation;
+                                var reputationColorClass = reputation >= 0 ? "text-success" : "text-danger";
+                            }
+                            <label class="float-end @reputationColorClass">Reputation: @reputation</label>
                         </div>
                     </div>
                     <a href="@Model.URL"> Link to the solution </a>
-                    <p class="card-text mt-4"><small class="text-body-secondary">Uploaded: @Model.UploadDate</small></p>
+                    <div class="row">
+                        <div class="col">
+                            <p class="card-text mt-4"><small class="text-body-secondary">Uploaded: @Model.UploadDate</small></p>
+                        </div>
+                        <div class="col">
+                            <p class="card-text mt-4 float-end"> Status: @Model.Status </p>
+                        </div>
+                    </div>
 
                     @if (User.IsInRole(UserRoles.Admin) && Model.TaskItem.IsExpired == false)
                     {
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#FeedbackModal-@Model.Id">
+                        <button type="button" class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#FeedbackModal-@Model.Id">
                             Rate the solution
                         </button>
                     }
+
                 </div>
             </div>
         </div>

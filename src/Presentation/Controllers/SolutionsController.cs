@@ -45,6 +45,15 @@ namespace WebMarket.Controllers
             {
                 solVM.Status = SolutionStatuses.Accepted.ToString();
                 await solutionRep.UpdateAsync(mapper.Map<Solution>(solVM));
+
+                var executor = await userRep.GetByIdAsync(solVM.ExecutorId);
+                if (executor is null)
+                {
+                    return RedirectToAction("Error", "Home");
+                }
+
+                executor.Reputation += Reputation.Accepted;
+                await userRep.UpdateAsync(executor);
             }
 
             return RedirectToAction("TaskDetails", "Tasks", new { taskId = solVM.TaskItemId });
@@ -59,6 +68,15 @@ namespace WebMarket.Controllers
             {
                 solVM.Status = SolutionStatuses.Rejected.ToString();
                 await solutionRep.UpdateAsync(mapper.Map<Solution>(solVM));
+
+                var executor = await userRep.GetByIdAsync(solVM.ExecutorId);
+                if (executor is null)
+                {
+                    return RedirectToAction("Error", "Home");
+                }
+
+                executor.Reputation += Reputation.Rejected;
+                await userRep.UpdateAsync(executor);
             }
 
             return RedirectToAction("TaskDetails", "Tasks", new { taskId = solVM.TaskItemId });
