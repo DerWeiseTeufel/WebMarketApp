@@ -9,7 +9,7 @@
 @model IEnumerable<TaskVM>
 
 @{
-    ViewData["Title"] = "Task List";
+    ViewData["Title"] = "Task History";
 }
 
 <h2 style="margin-bottom: 60px; margin-top: 40px"> @ViewData["Title"] </h2>
@@ -23,11 +23,13 @@
                     <div style="width:min-content" class="card-title flex-fill"> @taskItem.Title </div>
                     <div style="width:max-content; margin: 0 20px; align-content:end">
                         <a class="btn btn-outline-info" asp-controller="Tasks" asp-action="TaskDetails" asp-route-taskId="@taskItem.Id"><i class="bi bi-eye"></i> Details </a>
-                        @if (User.IsInRole(UserRoles.Admin))
+
+                        @if (taskItem.IsExpired == false)
                         {
-                            <a class="btn btn-outline-primary" asp-controller="Tasks" asp-action="EditTask" asp-route-taskId="@taskItem.Id"><i class="bi bi-pencil-square"></i> Edit </a>
-                            <a class="btn btn-danger text-white" asp-controller="Tasks" asp-action="DeleteTask" asp-route-taskId="@taskItem.Id"><i class="bi bi-trash"></i> Delete </a>
+                            <a class="btn btn-outline-primary" asp-controller="Tasks" asp-action="EditTask" asp-route-taskId="@taskItem.Id"><i class="bi bi-pencil-square"></i> Edit </a>                          
                         }
+
+                        <a class="btn btn-danger text-white" asp-controller="Tasks" asp-action="DeleteTask" asp-route-taskId="@taskItem.Id"><i class="bi bi-trash"></i> Delete </a>
                     </div>
                     <div class="reward-date">
                         <div class="reward">
@@ -46,10 +48,3 @@
         }
     </div>
 </div>
-
-@if (SignInManager.IsSignedIn(User) && User.IsInRole(UserRoles.Admin))
-{
-    <div style="position: fixed; right: 25px; bottom: 25px;" class="text-white">
-        <a asp-controller="Tasks" asp-action="NewTask" class="btn btn-success"><i class="bi bi-plus-circle"></i> Create a task </a>
-    </div>
-}

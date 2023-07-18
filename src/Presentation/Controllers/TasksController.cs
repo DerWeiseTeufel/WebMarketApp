@@ -1,7 +1,8 @@
 ﻿using Application.DomainServices;
 using AutoMapper;
-using Domain.Constants;
+using Presentation.Constants;
 using Domain.Entities;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.ViewModels;
@@ -14,11 +15,13 @@ namespace Presentation.Controllers
     {
         private readonly ITaskItemRep taskRep;
         private readonly IMapper mapper;
+        private readonly IUserRep userRep;
 
-        public TasksController(ITaskItemRep taskRep, IMapper mapper)
+        public TasksController(ITaskItemRep taskRep, IMapper mapper, IUserRep userRep)
         {
             this.taskRep = taskRep;
             this.mapper = mapper;
+            this.userRep = userRep;
         }
 
         public IActionResult Index()
@@ -93,6 +96,18 @@ namespace Presentation.Controllers
             ViewData["Currency"] = Сurrencies.GoldenCrocs;
 
             return View(mapper.Map<TaskVM>(taskItem));
+        }
+
+        [HttpGet]
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<IActionResult> TasksHistory()
+        {
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await userRep.GetByIdAsync(userId ?? "");
+            var taskList = mapper.Map<IEnumerable<TaskVM>>(user?.AvailableTasks ?? new List<TaskItem>());
+            ViewData["Currency"] = Сurrencies.GoldenCrocs;
+
+            return View(taskList);
         }
 
         [HttpGet]

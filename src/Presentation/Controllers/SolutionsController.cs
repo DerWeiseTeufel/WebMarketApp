@@ -1,6 +1,6 @@
 ﻿using Application.DomainServices;
 using AutoMapper;
-using Domain.Constants;
+using Presentation.Constants;
 using Domain.Entities;
 using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
