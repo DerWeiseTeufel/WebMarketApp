@@ -30,7 +30,7 @@ namespace WebMarket.Controllers
         {
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await userRep.GetByIdAsync(userId ?? "");
-            var solutionList = mapper.Map<IEnumerable<SolutionVM>>(user?.Solutions ?? new List<Solution>());
+            var solutionList = mapper.Map<IEnumerable<SolutionVM>>(user?.AvailableSolutions ?? new List<Solution>());
             ViewData["Currency"] = Сurrencies.GoldenCrocs;
 
             return View(solutionList);
@@ -70,7 +70,7 @@ namespace WebMarket.Controllers
             var taskItem = await taskItemRep.GetByIdAsync(taskId);
             if (taskItem is null)
             {
-                return RedirectToAction("Error", "Home");
+                return RedirectToAction("PageNotFound", "Home");
             }
 
             return View(new SolutionVM() { Id = taskId });

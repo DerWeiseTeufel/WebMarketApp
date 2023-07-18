@@ -17,6 +17,11 @@ namespace Infrastructure.Repositories
         }
 
         public async Task<TaskItem?> GetByIdAsync(int id) =>
-            await dbContext.TaskItems.FirstOrDefaultAsync(t => t.Id == id);
+            await dbContext.TaskItems.FirstOrDefaultAsync(t => t.Id == id && t.IsRemoved == false);
+
+        public IEnumerable<TaskItem> GetAllUnremoved() => 
+            dbContext.TaskItems.Where(task => task.IsRemoved == false);
+
+        public async Task DeleteAsync(TaskItem task) => await base.DeleteAsync(task, true);
     }
 }

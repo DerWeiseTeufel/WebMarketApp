@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Domain.Interfaces;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
-    public class Solution
+    public class Solution: IUndeletable
     {
         public int Id { get; set; }
 
@@ -15,6 +16,8 @@ namespace Domain.Entities
         public DateTime UploadDate { get; set; }
 
         public int TaskItemId { get; set; }
+
+        public bool IsRemoved { get; set; }
 
         public string ExecutorId { get; set; } = null!;
 

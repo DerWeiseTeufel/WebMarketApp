@@ -8,5 +8,7 @@ namespace Application.DomainServices
     {
         Task<User?> GetByIdAsync(string id);
         Task<User?> GetByEmailAsync(string email);
+        IEnumerable<User> GetAllUnremoved();
+        Task DeleteAsync(User user);
     }
 }

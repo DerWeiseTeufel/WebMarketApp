@@ -16,9 +16,14 @@ namespace Infrastructure.Repositories
         }
 
         public async Task<User?> GetByIdAsync(string id) 
-            => await dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+            => await dbContext.Users.FirstOrDefaultAsync(u => u.Id == id && u.IsRemoved == false);
 
         public async Task<User?> GetByEmailAsync(string email)
-           => await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+           => await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email && u.IsRemoved == false);
+
+        public IEnumerable<User> GetAllUnremoved() => 
+            dbContext.Users.Where(user => user.IsRemoved == false);
+
+        public async Task DeleteAsync(User user) => await base.DeleteAsync(user, true);
     }
 }

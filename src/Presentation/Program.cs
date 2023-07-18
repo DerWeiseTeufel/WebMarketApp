@@ -3,17 +3,23 @@ using Application.Services;
 using Domain.Entities;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
 var configuration = builder.Configuration;
+
+Environment.SetEnvironmentVariable("Authentication__Google__ClientId", "489423100830-l79kp1n9ndh5tl3fghrk9q20h87elrh3.apps.googleusercontent.com");
+Environment.SetEnvironmentVariable("Authentication__Google__ClientSecret", "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");
+
 
 builder.Services.AddAuthentication().AddGoogle(googleOptions =>
 {
-    googleOptions.ClientId = configuration["Authentication:Google:ClientId"] ?? "";
-    googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"] ?? "";
+    googleOptions.ClientId = Environment.GetEnvironmentVariable("Authentication__Google__ClientId") ??
+        throw new ArgumentNullException("googleOptions.ClientId is null");
+    googleOptions.ClientSecret = Environment.GetEnvironmentVariable("Authentication__Google__ClientSecret") ??
+        throw new ArgumentNullException("googleOptions.ClientSecret is null"); 
 });
 
 // Add services to the container.

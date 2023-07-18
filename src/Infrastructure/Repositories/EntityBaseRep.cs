@@ -1,11 +1,13 @@
 ﻿using Application.Interfaces;
 using Application.Services;
 using Domain.Entities;
+using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,9 +22,18 @@ namespace Infrastructure.Repositories
             this.dbContext = dbContext;
         }
 
-        public async Task DeleteAsync(T entity)
+        public async Task DeleteAsync(T entity, bool onlyTag)
         {
-            dbContext.Set<T>().Remove(entity);
+            if (onlyTag)
+            {
+                ((IUndeletable)entity).IsRemoved = true;
+                dbContext.Set<T>().Update(entity);
+            }
+            else
+            {
+                dbContext.Set<T>().Remove(entity);
+            }
+         
             await dbContext.SaveChangesAsync();
         }
 

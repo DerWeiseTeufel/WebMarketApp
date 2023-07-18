@@ -23,7 +23,7 @@ namespace Presentation.Controllers
 
         public IActionResult Index()
         {
-            var taskItems = mapper.Map<IEnumerable<TaskVM>>(taskRep.GetAll()
+            var taskItems = mapper.Map<IEnumerable<TaskVM>>(taskRep.GetAllUnremoved()
                 .Where(task => task.Deadline > DateTime.Now));            
             ViewData["Currency"] = Сurrencies.GoldenCrocs;
 
@@ -37,11 +37,11 @@ namespace Presentation.Controllers
             var taskItem = await taskRep.GetByIdAsync(taskId);
             if (taskItem is null)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction("PageNotFound", "Home");
             }
 
             var taskVM = mapper.Map<TaskVM>(taskItem);
-            taskVM.Solutions = mapper.Map<ICollection<SolutionVM>>(taskVM.Solutions);
+            taskVM.Solutions = mapper.Map<ICollection<SolutionVM>>(taskItem.AvailableSolutions);
             ViewData["Currency"] = Сurrencies.GoldenCrocs;
 
             return View(taskVM);

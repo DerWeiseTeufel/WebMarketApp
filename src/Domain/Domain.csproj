@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Entities\TaskItem.cs~RF64cd56f.TMP" />
     <None Remove="Entities\TaskItem.cs~RFb30691f.TMP" />
   </ItemGroup>
 
