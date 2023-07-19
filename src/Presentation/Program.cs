@@ -11,15 +11,15 @@ var configuration = builder.Configuration;
 
 builder.Services.AddAuthentication().AddGoogle(googleOptions =>
 {
-    googleOptions.ClientId = Environment.GetEnvironmentVariable("Authentication__Google__ClientId") ??
-        throw new ArgumentNullException("googleOptions.ClientId is null");
-    googleOptions.ClientSecret = Environment.GetEnvironmentVariable("Authentication__Google__ClientSecret") ??
-        throw new ArgumentNullException("googleOptions.ClientSecret is null"); 
+    googleOptions.ClientId = Environment.GetEnvironmentVariable("ClientId") ??
+        "489423100830-l79kp1n9ndh5tl3fghrk9q20h87elrh3.apps.googleusercontent.com";
+    googleOptions.ClientSecret = Environment.GetEnvironmentVariable("ClientSecret") ??
+        "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";
 });
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("SomeeConnection") ??
-    throw new InvalidOperationException("Connection string 'SomeeConnection' not found.");
+var connectionString = Environment.GetEnvironmentVariable("con") ??
+    builder.Configuration.GetConnectionString("SomeeConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
