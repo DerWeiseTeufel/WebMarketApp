@@ -1,4 +1,5 @@
 using Application.Services;
+using Application.UseCases;
 using Domain.Entities;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
@@ -31,6 +32,7 @@ builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfi
 builder.Services.AddScoped<IUserRep, UserRep>();
 builder.Services.AddScoped<ITaskItemRep, TaskRep>();
 builder.Services.AddScoped<ISolutionRep, SolutionRep>();
+builder.Services.AddScoped<IAddSolutionUseCase, AddSolutionUseCase>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 

@@ -17,13 +17,16 @@ namespace WebMarket.Controllers
         private readonly IMapper mapper;
         private readonly ITaskItemRep taskItemRep;
         private readonly IUserRep userRep;
+        private readonly IAddSolutionUseCase addSolUseCase;
 
-        public SolutionsController(ISolutionRep solutionRep, IMapper mapper, ITaskItemRep taskItemRep, IUserRep userRep)
+        public SolutionsController(ISolutionRep solutionRep, IMapper mapper,
+            ITaskItemRep taskItemRep, IUserRep userRep, IAddSolutionUseCase addSolUseCase)
         {
             this.solutionRep = solutionRep;
             this.mapper = mapper;
             this.taskItemRep = taskItemRep;
             this.userRep = userRep;
+            this.addSolUseCase = addSolUseCase;
         }
 
         public async Task<IActionResult> Index()
@@ -102,7 +105,7 @@ namespace WebMarket.Controllers
             if (solItem != null)
             {
                 await solutionRep.DeleteAsync(solItem);
-            }        
+            }
 
             return RedirectToAction("Index");
         }
@@ -111,17 +114,10 @@ namespace WebMarket.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveSolution(int taskId, string URL)
         {
-            var solVM = new SolutionVM()
-            {
-                TaskItemId = taskId,
-                URL = URL,
-                ExecutorId = User.FindFirstValue(ClaimTypes.NameIdentifier),
-                UploadDate = DateTime.Now,
-                Status = SolutionStatuses.UnderReview.ToString(),
-                Comment = ""
-            };
-
-            await solutionRep.AddAsync(mapper.Map<Solution>(solVM));
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string? result = await addSolUseCase.AddSolution(taskId, userId, URL);
+            
+            // TODO add elif for result
 
             return RedirectToAction("Index");
         }
