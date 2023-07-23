@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Presentation.ViewModels;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Application.UseCases.Common;
+using Application.UseCases;
 
 namespace Presentation.Controllers
 {
@@ -14,16 +16,16 @@ namespace Presentation.Controllers
     public class AdminController : Controller
     {
         private readonly UserManager<User> userManager;
-        private readonly IUserRep userRep;
+        private readonly UserUseCases userUseCases;
         private readonly RoleManager<IdentityRole> roleManager;
 
         public AdminController(
             UserManager<Domain.Entities.User> userManager,
-            IUserRep userRep,
+            UserUseCases userUseCases,
             RoleManager<IdentityRole> roleMgr)
         {
             this.userManager = userManager;
-            this.userRep = userRep;
+            this.userUseCases = userUseCases;
             roleManager = roleMgr;
         }
 
@@ -48,7 +50,7 @@ namespace Presentation.Controllers
                 if (result.Succeeded)
                 {
                     ViewData["Result"] = "Success";
-                    return View("Index");                  
+                    return View("Index");
                 }
 
                 foreach (IdentityError error in result.Errors)
@@ -56,7 +58,7 @@ namespace Presentation.Controllers
                     ModelState.AddModelError("", error.Description);
                 }
             }
-           
+
             return View("Index", roleVM);
         }
 
@@ -72,7 +74,7 @@ namespace Presentation.Controllers
                 }
                 else
                 {
-                    var userTarget = await userRep.GetByEmailAsync(roleVM.UserEmail);
+                    var userTarget = await userUseCases.GetByEmail.GetByEmailAsync(roleVM.UserEmail);
                     IdentityResult result = await userManager.AddToRoleAsync(userTarget, roleVM.RoleName);
 
                     if (result.Succeeded)
@@ -85,7 +87,7 @@ namespace Presentation.Controllers
                     {
                         ModelState.AddModelError("", error.Description);
                     }
-                }                             
+                }
             }
 
             return View("Index", roleVM);

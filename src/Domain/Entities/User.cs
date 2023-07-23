@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
-    public class User : IdentityUser, IUndeletable
+    public class User : IdentityUser, IUndeletable, IIdentifiable<string>
     {
         public string Name { get; set; } = null!;
 

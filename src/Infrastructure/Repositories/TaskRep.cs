@@ -7,7 +7,7 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace Infrastructure.Repositories
 {
-    public class TaskRep : EntityBaseRep<TaskItem>, ITaskItemRep
+    public class TaskRep : EntityBaseRep<int, TaskItem>, ITaskItemRep
     {
         private readonly AppDbContext dbContext;
 
@@ -15,13 +15,5 @@ namespace Infrastructure.Repositories
         {
             this.dbContext = dbContext;
         }
-
-        public async Task<TaskItem?> GetByIdAsync(int id) =>
-            await dbContext.TaskItems.FirstOrDefaultAsync(t => t.Id == id && t.IsRemoved == false);
-
-        public IEnumerable<TaskItem> GetAllUnremoved() => 
-            dbContext.TaskItems.Where(task => task.IsRemoved == false);
-
-        public async Task DeleteAsync(TaskItem task) => await base.DeleteAsync(task, true);
     }
 }

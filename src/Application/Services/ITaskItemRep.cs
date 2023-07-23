@@ -4,10 +4,7 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace Application.Services
 {
-    public interface ITaskItemRep : IEntityBaseRep<TaskItem>
+    public interface ITaskItemRep : IEntityBaseRep<int, TaskItem>
     {
-        Task<TaskItem?> GetByIdAsync(int id);
-        IEnumerable<TaskItem> GetAllUnremoved();
-        Task DeleteAsync(TaskItem task);
     }
 }

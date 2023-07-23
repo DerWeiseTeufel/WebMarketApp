@@ -1,43 +1,38 @@
-﻿using Application.Services;
+﻿using Application.UseCases;
 using AutoMapper;
-using Presentation.Constants;
 using Domain.Entities;
-using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Constants;
 using Presentation.ViewModels;
-using System.Data;
 using System.Security.Claims;
 
 namespace Presentation.Controllers
 {
     public class TasksController : Controller
     {
-        private readonly ITaskItemRep taskRep;
         private readonly IMapper mapper;
-        private readonly IUserRep userRep;
+        private readonly TaskUseCases taskUseCases;
 
-        public TasksController(ITaskItemRep taskRep, IMapper mapper, IUserRep userRep)
+        public TasksController(IMapper mapper, TaskUseCases taskUseCases)
         {
-            this.taskRep = taskRep;
             this.mapper = mapper;
-            this.userRep = userRep;
+            this.taskUseCases = taskUseCases;
         }
 
         public IActionResult Index()
         {
-            var taskItems = mapper.Map<IEnumerable<TaskVM>>(taskRep.GetAllUnremoved()
-                .Where(task => task.Deadline > DateTime.Now));            
+            var taskItems = mapper.Map<IEnumerable<TaskVM>>(taskUseCases.GetActive.GetActive());
             ViewData["Currency"] = Сurrencies.GoldenCrocs;
 
             return View(taskItems);
         }
 
         [HttpGet]
-        [Authorize(Roles=$"{UserRoles.Admin},{UserRoles.User}")]
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.User}")]
         public async Task<IActionResult> TaskDetails(int taskId)
         {
-            var taskItem = await taskRep.GetByIdAsync(taskId);
+            var taskItem = await taskUseCases.GetById.GetByIdAsync(taskId);
             if (taskItem is null)
             {
                 return RedirectToAction("PageNotFound", "Home");
@@ -54,7 +49,7 @@ namespace Presentation.Controllers
         [ValidateAntiForgeryToken]
         [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> SaveTask(TaskVM taskVM)
-        {          
+        {
             if (!ModelState.IsValid)
             {
                 ViewData["Error"] = "Form validation successfully failed";
@@ -64,13 +59,13 @@ namespace Presentation.Controllers
             if (taskVM.CreatorId is null)
             {
                 taskVM.CreatorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                await taskRep.AddAsync(mapper.Map<TaskItem>(taskVM));
+                await taskUseCases.Add.AddTaskAsync(mapper.Map<TaskItem>(taskVM));
             }
             else
-            {               
-                await taskRep.UpdateAsync(mapper.Map<TaskItem>(taskVM));
+            {
+                await taskUseCases.Update.UpdateAsync(mapper.Map<TaskItem>(taskVM));
             }
-           
+
             return RedirectToAction("Index", "Home");
         }
 
@@ -85,12 +80,11 @@ namespace Presentation.Controllers
         [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> EditTask(int taskId)
         {
-            var taskItem = await taskRep.GetByIdAsync(taskId);
-
-            if (taskItem is null)
+            var taskItem = await taskUseCases.GetById.GetByIdAsync(taskId);
+            if(taskItem is null)
             {
                 taskItem = new TaskItem();
-                taskItem.Deadline = DateTime.Now;                
+                taskItem.Deadline = DateTime.Now;
             }
 
             ViewData["Currency"] = Сurrencies.GoldenCrocs;
@@ -100,27 +94,27 @@ namespace Presentation.Controllers
 
         [HttpGet]
         [Authorize(Roles = UserRoles.Admin)]
-        public async Task<IActionResult> TasksHistory()
+        public IActionResult TasksHistory()
         {
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await userRep.GetByIdAsync(userId ?? "");
-            var taskList = mapper.Map<IEnumerable<TaskVM>>(user?.AvailableTasks ?? new List<TaskItem>());
-            ViewData["Currency"] = Сurrencies.GoldenCrocs;
+            try
+            {
+                var taskList = mapper.Map<IEnumerable<TaskVM>>(taskUseCases.GetUserTasks.GetUserTasks(userId));
+                ViewData["Currency"] = Сurrencies.GoldenCrocs;
 
-            return View(taskList);
+                return View(taskList);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Error", "Home");
+            }
         }
 
         [HttpGet]
         [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> DeleteTask(int taskId)
         {
-            var taskItem = await taskRep.GetByIdAsync(taskId);
-
-            if (taskItem != null)
-            {
-                await taskRep.DeleteAsync(taskItem);
-            }
-
+            await taskUseCases.Delete.DeleteByIdAsync(taskId);
             return RedirectToAction("Index", "Home");
         }
     }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
-    public class Solution: IUndeletable
+    public class Solution: IUndeletable, IIdentifiable<int>
     {
         public int Id { get; set; }
 

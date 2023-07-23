@@ -4,11 +4,7 @@ using Domain.Entities;
 
 namespace Application.Services
 {
-    public interface IUserRep: IEntityBaseRep<User>
+    public interface IUserRep: IEntityBaseRep<string, User>
     {
-        Task<User?> GetByIdAsync(string id);
-        Task<User?> GetByEmailAsync(string email);
-        IEnumerable<User> GetAllUnremoved();
-        Task DeleteAsync(User user);
     }
 }

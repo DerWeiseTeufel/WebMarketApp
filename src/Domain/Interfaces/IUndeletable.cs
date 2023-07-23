@@ -8,6 +8,6 @@ namespace Domain.Interfaces
 {
     public interface IUndeletable
     {
-        bool IsRemoved { get; set; }
+        public bool IsRemoved { get; set; }
     }
 }

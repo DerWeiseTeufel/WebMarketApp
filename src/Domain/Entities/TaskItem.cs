@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
-    public class TaskItem : IUndeletable
+    public class TaskItem : IUndeletable, IIdentifiable<int>
     {
         [Key]
         public int Id { get; set; }

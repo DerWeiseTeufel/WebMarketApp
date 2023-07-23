@@ -3,10 +3,7 @@ using Domain.Entities;
 
 namespace Application.Services
 {
-    public interface ISolutionRep : IEntityBaseRep<Solution>
+    public interface ISolutionRep : IEntityBaseRep<int, Solution>
     {
-        Task<Solution?> GetByIdAsync(int id);
-        IEnumerable<Solution> GetAllUnremoved();
-        Task DeleteAsync(Solution sol);
     }
 }

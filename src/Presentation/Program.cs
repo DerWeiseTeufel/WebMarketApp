@@ -1,9 +1,9 @@
 using Application.Services;
 using Application.UseCases;
+using Application.UseCases.Solutions;
 using Domain.Entities;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,7 +32,12 @@ builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfi
 builder.Services.AddScoped<IUserRep, UserRep>();
 builder.Services.AddScoped<ITaskItemRep, TaskRep>();
 builder.Services.AddScoped<ISolutionRep, SolutionRep>();
-builder.Services.AddScoped<IAddSolutionUseCase, AddSolutionUseCase>();
+builder.Services.AddScoped<IEntityBaseRep<int, TaskItem>, EntityBaseRep<int, TaskItem>>();
+builder.Services.AddScoped<IEntityBaseRep<int, Solution>, EntityBaseRep<int, Solution>>();
+builder.Services.AddScoped<IEntityBaseRep<string, User>, EntityBaseRep<string, User>>();
+builder.Services.AddScoped<SolUseCases>();
+builder.Services.AddScoped<TaskUseCases>();
+builder.Services.AddScoped<UserUseCases>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 

@@ -9,11 +9,12 @@ using System.Threading.Tasks;
 
 namespace Application.Services
 {
-    public interface IEntityBaseRep<T> where T : class, new()
+    public interface IEntityBaseRep<Tkey, T> where T : class, new()
     {        
-        IEnumerable<T> GetAll();
+        IQueryable<T> GetAll();
+        Task<T?> GetByIdAsync(Tkey id);
         Task AddAsync(T entity);
         Task UpdateAsync(T entity);
-        Task DeleteAsync(T entity, bool onlyTag);
+        Task DeleteAsync(T entity);
     }
 }

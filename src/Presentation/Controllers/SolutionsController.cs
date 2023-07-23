@@ -1,10 +1,10 @@
-﻿using Application.Services;
+﻿using Application.UseCases;
 using AutoMapper;
-using Presentation.Constants;
 using Domain.Entities;
 using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Constants;
 using Presentation.ViewModels;
 using System.Security.Claims;
 
@@ -13,27 +13,22 @@ namespace WebMarket.Controllers
     [Authorize]
     public class SolutionsController : Controller
     {
-        private readonly ISolutionRep solutionRep;
         private readonly IMapper mapper;
-        private readonly ITaskItemRep taskItemRep;
-        private readonly IUserRep userRep;
-        private readonly IAddSolutionUseCase addSolUseCase;
+        private readonly SolUseCases solUseCases;
+        private readonly TaskUseCases taskUseCases;
 
-        public SolutionsController(ISolutionRep solutionRep, IMapper mapper,
-            ITaskItemRep taskItemRep, IUserRep userRep, IAddSolutionUseCase addSolUseCase)
+        public SolutionsController(IMapper mapper, SolUseCases solUseCases, TaskUseCases taskUseCases)
         {
-            this.solutionRep = solutionRep;
             this.mapper = mapper;
-            this.taskItemRep = taskItemRep;
-            this.userRep = userRep;
-            this.addSolUseCase = addSolUseCase;
+            this.solUseCases = solUseCases;
+            this.taskUseCases = taskUseCases;
         }
 
         public async Task<IActionResult> Index()
         {
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await userRep.GetByIdAsync(userId ?? "");
-            var solutionList = mapper.Map<IEnumerable<SolutionVM>>(user?.AvailableSolutions ?? new List<Solution>());
+            var sols = await solUseCases.GetUserSols.GetUserSolsAsync(userId);
+            var solutionList = mapper.Map<IEnumerable<SolutionVM>>(sols);
             ViewData["Currency"] = Сurrencies.GoldenCrocs;
 
             return View(solutionList);
@@ -46,17 +41,14 @@ namespace WebMarket.Controllers
         {
             if (ModelState.IsValid)
             {
-                solVM.Status = SolutionStatuses.Accepted.ToString();
-                await solutionRep.UpdateAsync(mapper.Map<Solution>(solVM));
-
-                var executor = await userRep.GetByIdAsync(solVM.ExecutorId);
-                if (executor is null)
+                try
+                {
+                    await solUseCases.Accept.AcceptSolAsync(mapper.Map<Solution>(solVM));
+                }
+                catch (Exception)
                 {
                     return RedirectToAction("Error", "Home");
                 }
-
-                executor.Reputation += Reputation.Accepted;
-                await userRep.UpdateAsync(executor);
             }
 
             return RedirectToAction("TaskDetails", "Tasks", new { taskId = solVM.TaskItemId });
@@ -69,17 +61,14 @@ namespace WebMarket.Controllers
         {
             if (ModelState.IsValid)
             {
-                solVM.Status = SolutionStatuses.Rejected.ToString();
-                await solutionRep.UpdateAsync(mapper.Map<Solution>(solVM));
-
-                var executor = await userRep.GetByIdAsync(solVM.ExecutorId);
-                if (executor is null)
+                try
+                {
+                    await solUseCases.Decline.DeclineSolAsync(mapper.Map<Solution>(solVM));
+                }
+                catch (Exception)
                 {
                     return RedirectToAction("Error", "Home");
                 }
-
-                executor.Reputation += Reputation.Rejected;
-                await userRep.UpdateAsync(executor);
             }
 
             return RedirectToAction("TaskDetails", "Tasks", new { taskId = solVM.TaskItemId });
@@ -88,8 +77,7 @@ namespace WebMarket.Controllers
         [HttpGet]
         public async Task<IActionResult> NewSolution(int taskId)
         {
-            var taskItem = await taskItemRep.GetByIdAsync(taskId);
-            if (taskItem is null)
+            if (await taskUseCases.GetById.GetByIdAsync(taskId) is null)
             {
                 return RedirectToAction("PageNotFound", "Home");
             }
@@ -100,13 +88,7 @@ namespace WebMarket.Controllers
         [HttpGet]
         public async Task<IActionResult> DeleteSol(int solId)
         {
-            var solItem = await solutionRep.GetByIdAsync(solId);
-
-            if (solItem != null)
-            {
-                await solutionRep.DeleteAsync(solItem);
-            }
-
+            await solUseCases.Delete.DeleteByIdAsync(solId);
             return RedirectToAction("Index");
         }
 
@@ -115,9 +97,15 @@ namespace WebMarket.Controllers
         public async Task<IActionResult> SaveSolution(int taskId, string URL)
         {
             string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            string? result = await addSolUseCase.AddSolution(taskId, userId, URL);
-            
-            // TODO add elif for result
+
+            try
+            {
+                await solUseCases.Add.AddSolutionAsync(taskId, userId, URL);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Error", "Home");
+            }
 
             return RedirectToAction("Index");
         }
