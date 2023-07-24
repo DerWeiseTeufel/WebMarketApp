@@ -22,7 +22,7 @@ namespace Application.UseCases.Tasks
                 throw new Exception("Invalid input");
             }
 
-            var creator = userRep.GetByIdAsync(taskItem.CreatorId);
+            var creator = await userRep.GetByIdAsync(taskItem.CreatorId);
             if (creator is null)
             {
                 throw new Exception("Creator not found");
