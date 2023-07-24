@@ -4,6 +4,7 @@ using Application.UseCases.Solutions;
 using Domain.Entities;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
+using Infrastructure.Scheduling;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -72,5 +73,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
+StatusUpScheduler.Start();
 
 app.Run();
