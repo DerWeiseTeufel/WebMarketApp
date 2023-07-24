@@ -36,5 +36,7 @@ namespace Infrastructure.Repositories
 
         public async Task<T?> GetByIdAsync(Tkey id) =>
                 await dbContext.Set<T>().FirstOrDefaultAsync(u => ((IIdentifiable<Tkey>)u).Id.Equals(id));
+
+        public async Task SaveChangesAsync() => await dbContext.SaveChangesAsync();
     }
 }
